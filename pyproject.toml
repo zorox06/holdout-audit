@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "holdout-audit"
+version = "0.1.0"
+description = "Evidence-first CSV train/test split checks with offline HTML reports."
+readme = "PYPI_README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Akshay Sekhar"}]
+dependencies = []
+keywords = ["machine-learning", "data-leakage", "csv", "validation", "train-test-split"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/zorox06/holdout-audit"
+Repository = "https://github.com/zorox06/holdout-audit"
+Issues = "https://github.com/zorox06/holdout-audit/issues"
+Documentation = "https://github.com/zorox06/holdout-audit#readme"
+
+[project.scripts]
+holdout-audit = "holdout_audit.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["holdout_audit*"]
+
+[tool.setuptools.package-data]
+holdout_audit = ["data/*.csv"]

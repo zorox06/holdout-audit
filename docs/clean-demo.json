@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "tool_version": "0.1.0",
+  "verdict": "no_findings",
+  "inputs": {
+    "train": {
+      "name": "train-clean.csv",
+      "rows": 11
+    },
+    "test": {
+      "name": "test-clean.csv",
+      "rows": 4
+    },
+    "columns": 6
+  },
+  "configuration": {
+    "target": "churn",
+    "group": "customer_id",
+    "time": "observed_at",
+    "ignored": [
+      "record_id"
+    ],
+    "features": [
+      "tenure_months",
+      "monthly_spend"
+    ],
+    "comparison": "exact CSV string equality"
+  },
+  "checks": [
+    {
+      "code": "sample_overlap",
+      "title": "Samples shared across splits",
+      "status": "pass",
+      "severity": "error",
+      "summary": "0 test records have an exact feature match in train.",
+      "evidence": {
+        "shared_unique_samples": 0,
+        "affected_train_records": 0,
+        "affected_test_records": 0,
+        "example_record_pairs": []
+      },
+      "recommendation": "Inspect these record pairs. If they represent the same observation, deduplicate before splitting. Identical features alone do not prove leakage.",
+      "complete": true
+    },
+    {
+      "code": "train_duplicates",
+      "title": "Repeated samples in train",
+      "status": "pass",
+      "severity": "warning",
+      "summary": "0 repeated feature records beyond the first occurrence.",
+      "evidence": {
+        "repeated_records": 0,
+        "unique_feature_records": 11
+      },
+      "recommendation": "Review repeated observations before splitting or evaluating. Repeated features can also be legitimate; do not delete them automatically.",
+      "complete": true
+    },
+    {
+      "code": "test_duplicates",
+      "title": "Repeated samples in test",
+      "status": "pass",
+      "severity": "warning",
+      "summary": "0 repeated feature records beyond the first occurrence.",
+      "evidence": {
+        "repeated_records": 0,
+        "unique_feature_records": 4
+      },
+      "recommendation": "Review repeated observations before splitting or evaluating. Repeated features can also be legitimate; do not delete them automatically.",
+      "complete": true
+    },
+    {
+      "code": "entity_overlap",
+      "title": "Entities shared across splits",
+      "status": "pass",
+      "severity": "warning",
+      "summary": "0 nonmissing entity IDs occur in both splits.",
+      "evidence": {
+        "column": "customer_id",
+        "shared_entities": 0,
+        "affected_train_records": 0,
+        "affected_test_records": 0,
+        "missing_train_ids": 0,
+        "missing_test_ids": 0
+      },
+      "recommendation": "If evaluation must generalize to unseen entities, split by entity. Overlap may be appropriate for forecasting known entities. Missing IDs are unassessed.",
+      "complete": true
+    },
+    {
+      "code": "time_order",
+      "title": "Strict future holdout",
+      "status": "pass",
+      "severity": "warning",
+      "summary": "Every train timestamp precedes every test timestamp.",
+      "evidence": {
+        "column": "observed_at",
+        "invalid_train_records": 0,
+        "invalid_test_records": 0,
+        "mixed_timezone_awareness": false,
+        "train_ends_before_test_starts": true
+      },
+      "recommendation": "For a strictly future evaluation, put every training record before the first test timestamp. Ties are flagged. This check does not inspect feature availability.",
+      "complete": true
+    },
+    {
+      "code": "target_copy",
+      "title": "Target copied into a feature",
+      "status": "pass",
+      "severity": "error",
+      "summary": "0 feature columns exactly match the target in every record.",
+      "evidence": {
+        "target": "churn",
+        "matching_columns": []
+      },
+      "recommendation": "Verify whether these columns are available at prediction time. Remove copies created from the outcome. Exact equality is a review signal, not a causal diagnosis.",
+      "complete": true
+    }
+  ]
+}

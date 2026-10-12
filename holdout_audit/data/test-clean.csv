@@ -1,0 +1,5 @@
+record_id,customer_id,observed_at,tenure_months,monthly_spend,churn
+r014,c014,2026-02-02,15,48,0
+r015,c015,2026-02-03,5,92,1
+r017,c017,2026-02-05,20,42,0
+r018,c018,2026-02-06,7,75,1

@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "tool_version": "0.1.0",
+  "verdict": "review_required",
+  "inputs": {
+    "train": {
+      "name": "train-leaky.csv",
+      "rows": 12
+    },
+    "test": {
+      "name": "test-leaky.csv",
+      "rows": 6
+    },
+    "columns": 7
+  },
+  "configuration": {
+    "target": "churn",
+    "group": "customer_id",
+    "time": "observed_at",
+    "ignored": [
+      "record_id"
+    ],
+    "features": [
+      "tenure_months",
+      "monthly_spend",
+      "churn_copy"
+    ],
+    "comparison": "exact CSV string equality"
+  },
+  "checks": [
+    {
+      "code": "sample_overlap",
+      "title": "Samples shared across splits",
+      "status": "flag",
+      "severity": "error",
+      "summary": "2 test records have an exact feature match in train.",
+      "evidence": {
+        "shared_unique_samples": 2,
+        "affected_train_records": 3,
+        "affected_test_records": 2,
+        "example_record_pairs": [
+          {
+            "train_record": 2,
+            "test_record": 1
+          },
+          {
+            "train_record": 4,
+            "test_record": 4
+          }
+        ]
+      },
+      "recommendation": "Inspect these record pairs. If they represent the same observation, deduplicate before splitting. Identical features alone do not prove leakage.",
+      "complete": true
+    },
+    {
+      "code": "train_duplicates",
+      "title": "Repeated samples in train",
+      "status": "flag",
+      "severity": "warning",
+      "summary": "1 repeated feature record beyond the first occurrence.",
+      "evidence": {
+        "repeated_records": 1,
+        "unique_feature_records": 11
+      },
+      "recommendation": "Review repeated observations before splitting or evaluating. Repeated features can also be legitimate; do not delete them automatically.",
+      "complete": true
+    },
+    {
+      "code": "test_duplicates",
+      "title": "Repeated samples in test",
+      "status": "pass",
+      "severity": "warning",
+      "summary": "0 repeated feature records beyond the first occurrence.",
+      "evidence": {
+        "repeated_records": 0,
+        "unique_feature_records": 6
+      },
+      "recommendation": "Review repeated observations before splitting or evaluating. Repeated features can also be legitimate; do not delete them automatically.",
+      "complete": true
+    },
+    {
+      "code": "entity_overlap",
+      "title": "Entities shared across splits",
+      "status": "flag",
+      "severity": "warning",
+      "summary": "2 nonmissing entity IDs occur in both splits.",
+      "evidence": {
+        "column": "customer_id",
+        "shared_entities": 2,
+        "affected_train_records": 2,
+        "affected_test_records": 2,
+        "missing_train_ids": 0,
+        "missing_test_ids": 0
+      },
+      "recommendation": "If evaluation must generalize to unseen entities, split by entity. Overlap may be appropriate for forecasting known entities. Missing IDs are unassessed.",
+      "complete": true
+    },
+    {
+      "code": "time_order",
+      "title": "Strict future holdout",
+      "status": "flag",
+      "severity": "warning",
+      "summary": "Train does not end strictly before test begins.",
+      "evidence": {
+        "column": "observed_at",
+        "invalid_train_records": 0,
+        "invalid_test_records": 0,
+        "mixed_timezone_awareness": false,
+        "train_ends_before_test_starts": false
+      },
+      "recommendation": "For a strictly future evaluation, put every training record before the first test timestamp. Ties are flagged. This check does not inspect feature availability.",
+      "complete": true
+    },
+    {
+      "code": "target_copy",
+      "title": "Target copied into a feature",
+      "status": "flag",
+      "severity": "error",
+      "summary": "1 feature column exactly matches the target in every record.",
+      "evidence": {
+        "target": "churn",
+        "matching_columns": [
+          "churn_copy"
+        ]
+      },
+      "recommendation": "Verify whether these columns are available at prediction time. Remove copies created from the outcome. Exact equality is a review signal, not a causal diagnosis.",
+      "complete": true
+    }
+  ]
+}

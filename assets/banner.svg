@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="390" viewBox="0 0 1280 390" role="img" aria-labelledby="title description">
+  <title id="title">Holdout Audit</title>
+  <desc id="description">Check your split before you trust your score. Local CSV diagnostics with evidence you can act on.</desc>
+  <rect width="1280" height="390" rx="20" fill="#101515"/>
+  <path d="M790 0V390M850 0V390M910 0V390M970 0V390M1030 0V390M1090 0V390M1150 0V390M1210 0V390M730 60H1280M730 120H1280M730 180H1280M730 240H1280M730 300H1280M730 360H1280" stroke="#25302b" stroke-opacity=".5"/>
+  <rect x="58" y="43" width="32" height="32" rx="8" fill="#b8f3d6"/>
+  <text x="66" y="67" font-family="Arial,sans-serif" font-size="24" font-weight="700" fill="#101515">H</text>
+  <text x="103" y="66" font-family="Arial,sans-serif" font-size="22" font-weight="600" fill="#edf4f0">holdout audit</text>
+  <text x="58" y="141" font-family="Consolas,monospace" font-size="13" letter-spacing="2" fill="#b8f3d6">EVIDENCE BEFORE CONFIDENCE</text>
+  <text x="55" y="206" font-family="Arial,sans-serif" font-size="51" font-weight="600" letter-spacing="-1.5" fill="#edf4f0">Check your split.</text>
+  <text x="55" y="266" font-family="Arial,sans-serif" font-size="51" font-weight="600" letter-spacing="-1.5" fill="#b8f3d6">Then trust your score.</text>
+  <text x="58" y="318" font-family="Arial,sans-serif" font-size="17" fill="#a0afab">Train / test diagnostics. Zero runtime dependencies.</text>
+  <rect x="802" y="77" width="408" height="252" rx="15" fill="#182020" stroke="#34433d"/>
+  <circle cx="827" cy="101" r="4" fill="#ffa3a0"/><circle cx="843" cy="101" r="4" fill="#f2c376"/><circle cx="859" cy="101" r="4" fill="#b8f3d6"/>
+  <text x="827" y="141" font-family="Consolas,monospace" font-size="13" fill="#a0afab">$ python -m holdout_audit demo</text>
+  <path d="M826 157H1186" stroke="#34433d"/>
+  <text x="827" y="187" font-family="Consolas,monospace" font-size="14" fill="#f2c376">[!] sample overlap</text>
+  <text x="1179" y="187" text-anchor="end" font-family="Consolas,monospace" font-size="14" fill="#f2c376">2 rows</text>
+  <text x="827" y="219" font-family="Consolas,monospace" font-size="14" fill="#f2c376">[!] shared entities</text>
+  <text x="1179" y="219" text-anchor="end" font-family="Consolas,monospace" font-size="14" fill="#f2c376">2 IDs</text>
+  <text x="827" y="251" font-family="Consolas,monospace" font-size="14" fill="#f2c376">[!] target copy</text>
+  <text x="1179" y="251" text-anchor="end" font-family="Consolas,monospace" font-size="14" fill="#f2c376">1 col</text>
+  <rect x="826" y="273" width="360" height="33" rx="6" fill="#233c30"/>
+  <text x="842" y="295" font-family="Consolas,monospace" font-size="12" fill="#b8f3d6">report.html  →  review the evidence</text>
+</svg>
