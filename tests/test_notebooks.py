@@ -89,7 +89,10 @@ class NotebookReportTests(CSVCase):
         self.assertIn('sandbox="allow-scripts"', rich)
         self.assertNotIn('allow-same-origin', rich)
         self.assertNotIn('<script>', rich)
-        self.assertIn(html.escape(report.to_html(), quote=True), rich)
+        from spliv.render import render_html
+        self.assertIn(html.escape(render_html(report, embedded=True), quote=True), rich)
+        self.assertIn('type="button" hidden>Print', html.unescape(rich))
+        self.assertNotIn('type="button" hidden>Print', report.to_html())
 
 
 if __name__ == '__main__':

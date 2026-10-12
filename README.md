@@ -15,6 +15,7 @@
 
 <p align="center">
   <a href="#try-it-in-30-seconds">Quickstart</a> ·
+  <a href="https://colab.research.google.com/github/zorox06/holdout-audit/blob/main/examples/colab_quickstart.ipynb">Open in Colab</a> ·
   <a href="#what-it-checks">Checks</a> ·
   <a href="#use-your-own-data">Your data</a> ·
   <a href="#python-api">Python API</a> ·

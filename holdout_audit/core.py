@@ -105,9 +105,10 @@ class Report:
     def _repr_html_(self) -> str:
         """Jupyter/Colab rich display, isolated from the notebook document."""
         from html import escape
+        from .render import render_html
         return ('<iframe title="Spliv split report" sandbox="allow-scripts" '
                 'style="width:100%;height:850px;border:0" srcdoc="'
-                + escape(self.to_html(), quote=True) + '"></iframe>')
+                + escape(render_html(self, embedded=True), quote=True) + '"></iframe>')
 
 
 def _missing(value: str) -> bool:

@@ -57,7 +57,7 @@ def _evidence_items(evidence: dict) -> str:
     return "".join(pieces)
 
 
-def render_html(report: Report) -> str:
+def render_html(report: Report, *, embedded: bool = False) -> str:
     flagged = sum(check.status == "flag" for check in report.checks)
     inconclusive = sum(check.status == "inconclusive" for check in report.checks)
     requested = sum(check.status != "skipped" for check in report.checks)
@@ -79,8 +79,8 @@ def render_html(report: Report) -> str:
     def context(label: str, value: str) -> str:
         return f'<div class="context"><div class="label">{escape(label)}</div><p>{escape(value)}</p></div>'
     contexts = "".join([
-        context("Training file", report.inputs["train"]["name"]),
-        context("Holdout file", report.inputs["test"]["name"]),
+        context("Training input", report.inputs["train"]["name"]),
+        context("Holdout input", report.inputs["test"]["name"]),
         context("Target / entity / time", " / ".join(config[name] or "not set" for name in ("target", "group", "time"))),
         context("Compared features", ", ".join(config["features"])),
         context("Ignored columns", ", ".join(config["ignored"]) or "none"),
@@ -92,10 +92,10 @@ def render_html(report: Report) -> str:
 <title>Spliv — Split report</title><style>{CSS}</style></head>
 <body><div class="shell">
 <header class="top"><div class="brand"><span class="mark" aria-hidden="true">S</span>spliv<span class="label">/ 0.2</span></div>
-<div class="top-right"><span class="label"><span class="dot"></span>Offline report</span><button class="print" type="button">Print / Save PDF</button></div></header>
+<div class="top-right"><span class="label"><span class="dot"></span>Offline report</span><button class="print" type="button"{' hidden' if embedded else ''}>Print / Save PDF</button></div></header>
 <main><section class="hero"><div><p class="eyebrow">Train / test integrity</p><h1>{headings[report.verdict]}</h1>
 <p class="sub">Evidence before confidence. Review split boundaries and exact sample matches before trusting your model metrics.</p></div>
-<div class="run-tag">CSV IN &nbsp;→&nbsp; EVIDENCE OUT</div></section>
+<div class="run-tag">TABULAR DATA &nbsp;→&nbsp; EVIDENCE</div></section>
 <section class="metrics" aria-label="Audit summary">
 <div class="metric"><div class="label">Train records</div><div class="value">{report.inputs['train']['rows']:,}</div><div class="metric-note">All records scanned</div></div>
 <div class="metric"><div class="label">Test records</div><div class="value">{report.inputs['test']['rows']:,}</div><div class="metric-note">All records scanned</div></div>
