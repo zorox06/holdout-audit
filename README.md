@@ -31,11 +31,11 @@ No model training. No API keys. No uploads. No automatic data changes.
 
 ## Try it in 30 seconds
 
-Download or clone this repository, then run:
+Install from PyPI, then run:
 
 ```bash
-cd holdout-audit
-python -m spliv demo
+pip install spliv
+spliv demo
 ```
 
 Open **`report.html`** in your browser. That's the entire setup—Python 3.10+ is the only runtime requirement.
@@ -98,14 +98,14 @@ python -m spliv audit train.csv test.csv --target churn --ignore record_id --fai
 
 Reports are written even when the gate returns 1. Parent output directories must exist. Existing report files are replaced; input CSVs cannot be used as output paths. Filenames should end in `.html` / `.json` for convenient viewing.
 
-### Optional installation
+### Run from source
 
 ```bash
 python -m pip install .
 spliv demo
 ```
 
-This installs from the local repository. The project is not currently published to PyPI. Installation may download the setuptools build backend; running from the checkout requires no installation or network access.
+This installs from the local repository. You can also run `python -m spliv demo` directly from the checkout without installing it. The published package is available on [PyPI](https://pypi.org/project/spliv/).
 
 ## Python API
 
