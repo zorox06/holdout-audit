@@ -6,7 +6,7 @@ The PyPI trusted publisher must match these values exactly:
 
 | Field | Value |
 | --- | --- |
-| PyPI project | `holdout-audit` |
+| PyPI project | `spliv` |
 | GitHub owner | `zorox06` |
 | Repository | `holdout-audit` |
 | Workflow filename | `publish.yml` |

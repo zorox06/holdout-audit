@@ -28,4 +28,4 @@ jobs:
         run: python -m pip install .
       - name: Smoke-test installed entry point and bundled data
         working-directory: ${{ runner.temp }}
-        run: holdout-audit demo --clean --fail-on warning --output installed-demo.html
+        run: spliv demo --clean --fail-on warning --output installed-demo.html

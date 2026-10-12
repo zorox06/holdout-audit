@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="Holdout Audit — Check your split before you trust your score" width="100%" />
+  <img src="assets/banner.svg" alt="Spliv — Check your split before you trust your score" width="100%" />
 </p>
 
 <p align="center">
@@ -25,7 +25,7 @@
 
 Your model's test score is only useful if the split reflects what you want to predict.
 
-**Holdout Audit** inspects two CSV files for exact sample overlap, repeated observations, shared entities, time-order violations, and features that copy the target. It returns counts, record references, and practical next steps in a readable terminal summary, an offline HTML report, and optional JSON.
+**Spliv** inspects two CSV files for exact sample overlap, repeated observations, shared entities, time-order violations, and features that copy the target. It returns counts, record references, and practical next steps in a readable terminal summary, an offline HTML report, and optional JSON.
 
 No model training. No API keys. No uploads. No automatic data changes.
 
@@ -35,7 +35,7 @@ Download or clone this repository, then run:
 
 ```bash
 cd holdout-audit
-python -m holdout_audit demo
+python -m spliv demo
 ```
 
 Open **`report.html`** in your browser. That's the entire setup—Python 3.10+ is the only runtime requirement.
@@ -56,7 +56,7 @@ The synthetic demo deliberately contains **five flagged checks**:
 Compare with the repaired fixture:
 
 ```bash
-python -m holdout_audit demo --clean --output clean-report.html
+python -m spliv demo --clean --output clean-report.html
 ```
 
 Both demo commands return exit code 0 by default, so you can explore the reports. Use `--fail-on warning` to turn the demo into a gate. The fixtures are invented examples, not benchmark results or evidence of model performance.
@@ -77,7 +77,7 @@ Both demo commands return exit code 0 by default, so you can explore the reports
 ## Use your own data
 
 ```bash
-python -m holdout_audit audit train.csv test.csv --target churn --group customer_id --time observed_at --ignore record_id --output audit.html --json audit.json
+python -m spliv audit train.csv test.csv --target churn --group customer_id --time observed_at --ignore record_id --output audit.html --json audit.json
 ```
 
 Target, entity, timestamp, and ignored columns are excluded from feature matching. **Exclude record IDs:** otherwise unique IDs can hide identical feature samples. Repeat `--ignore` for additional metadata columns.
@@ -85,7 +85,7 @@ Target, entity, timestamp, and ignored columns are excluded from feature matchin
 ### CI gate
 
 ```bash
-python -m holdout_audit audit train.csv test.csv --target churn --ignore record_id --fail-on warning --output audit.html
+python -m spliv audit train.csv test.csv --target churn --ignore record_id --fail-on warning --output audit.html
 ```
 
 | Exit | Meaning |
@@ -102,7 +102,7 @@ Reports are written even when the gate returns 1. Parent output directories must
 
 ```bash
 python -m pip install .
-holdout-audit demo
+spliv demo
 ```
 
 This installs from the local repository. The project is not currently published to PyPI. Installation may download the setuptools build backend; running from the checkout requires no installation or network access.
@@ -110,8 +110,8 @@ This installs from the local repository. The project is not currently published 
 ## Python API
 
 ```python
-from holdout_audit import audit
-from holdout_audit.render import render_html
+from spliv import audit
+from spliv.render import render_html
 
 report = audit(
     "train.csv",
@@ -146,13 +146,13 @@ The JSON schema is versioned (`schema_version: 1`). Check statuses are `pass`, `
 
 ## Limitations
 
-Holdout Audit **does not certify a dataset as leakage-free**. It does not inspect training code or detect preprocessing fitted on test data, near-duplicates, numeric-equivalent encodings, transformed target proxies, outcome-derived features, or whether a feature existed at prediction time.
+Spliv **does not certify a dataset as leakage-free**. It does not inspect training code or detect preprocessing fitted on test data, near-duplicates, numeric-equivalent encodings, transformed target proxies, outcome-derived features, or whether a feature existed at prediction time.
 
 It scans all rows and holds both CSVs and comparison indexes in memory. This version is intended for datasets that fit comfortably in RAM, not multi-gigabyte data lakes. There is no approximate matching or sampling.
 
 The repaired demo removes an outcome-copy feature and repeated samples, uses separate entity sets, and places train before test. It illustrates these checks only; copying its repairs into a real dataset is not a substitute for designing the evaluation protocol.
 
-For pipeline-level prevention, see [scikit-learn's data leakage guidance](https://scikit-learn.org/stable/common_pitfalls.html#data-leakage). Larger data-quality or runtime-instrumentation tools may be more appropriate when you need broader checks. Holdout Audit focuses on a small, inspectable CSV workflow with no runtime dependencies.
+For pipeline-level prevention, see [scikit-learn's data leakage guidance](https://scikit-learn.org/stable/common_pitfalls.html#data-leakage). Larger data-quality or runtime-instrumentation tools may be more appropriate when you need broader checks. Spliv focuses on a small, inspectable CSV workflow with no runtime dependencies.
 
 ## Development
 

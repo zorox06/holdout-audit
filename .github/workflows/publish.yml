@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/holdout-audit/
+      url: https://pypi.org/project/spliv/
     permissions:
       id-token: write
     steps:

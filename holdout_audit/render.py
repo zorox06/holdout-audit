@@ -89,9 +89,9 @@ def render_html(report: Report) -> str:
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;">
-<title>Holdout Audit — Split report</title><style>{CSS}</style></head>
+<title>Spliv — Split report</title><style>{CSS}</style></head>
 <body><div class="shell">
-<header class="top"><div class="brand"><span class="mark" aria-hidden="true">H</span>holdout audit<span class="label">/ 0.1</span></div>
+<header class="top"><div class="brand"><span class="mark" aria-hidden="true">S</span>spliv<span class="label">/ 0.1</span></div>
 <div class="top-right"><span class="label"><span class="dot"></span>Offline report</span><button class="print" type="button">Print / Save PDF</button></div></header>
 <main><section class="hero"><div><p class="eyebrow">Train / test integrity</p><h1>{headings[report.verdict]}</h1>
 <p class="sub">Evidence before confidence. Review split boundaries and exact sample matches before trusting your model metrics.</p></div>
@@ -109,7 +109,7 @@ def render_html(report: Report) -> str:
 <svg width="18" height="21" viewBox="0 0 18 21" fill="none" aria-hidden="true"><path d="M9 1L17 4V10C17 15 13 18 9 20C5 18 1 15 1 10V4L9 1Z" stroke="currentColor"/><path d="M5 10L8 13L13 7" stroke="currentColor"/></svg>
 <div><strong>Your data stays local.</strong>No uploads, telemetry, external assets, or raw cell values in this report. Filenames and column labels are included.</div></div></aside></div>
 <div class="scope"><span aria-hidden="true">↳</span><p><b>A check, not a guarantee.</b> These diagnostics identify exact matches and configured split conditions. They do not detect preprocessing fitted on test data, near-duplicates, transformed target proxies, or features unavailable at prediction time. Review findings in the context of your evaluation goal.</p></div>
-</main><footer><span>HOLDOUT AUDIT / EVIDENCE-FIRST SPLIT CHECKS</span><span>DATA RECORD NUMBERS START AT 1 · NO SAMPLING</span></footer>
+</main><footer><span>SPLIV / EVIDENCE-FIRST SPLIT CHECKS</span><span>DATA RECORD NUMBERS START AT 1 · NO SAMPLING</span></footer>
 </div><script>{SCRIPT}</script></body></html>"""
 
 

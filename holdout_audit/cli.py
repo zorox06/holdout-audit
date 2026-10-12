@@ -27,7 +27,7 @@ def _write(path: Path, content: str) -> None:
 
 
 def _print_report(report: Report) -> None:
-    print("\nHOLDOUT AUDIT | evidence-first split checks\n")
+    print("\nSPLIV | evidence-first split checks\n")
     markers = {"flag": "[!]", "pass": "[+]", "inconclusive": "[?]", "skipped": "[-]"}
     for check in report.checks:
         print(f"{markers[check.status]} {check.title}: {check.summary}")
@@ -57,7 +57,7 @@ def _outputs(parser: argparse.ArgumentParser, args: argparse.Namespace) -> list[
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Audit CSV train/test splits locally. No dependencies or API keys.")
-    parser.add_argument("--version", action="version", version="holdout-audit 0.1.0")
+    parser.add_argument("--version", action="version", version="spliv 0.1.0")
     commands = parser.add_subparsers(dest="command", required=True)
     inspect = commands.add_parser("audit", help="Audit your train and test CSVs")
     inspect.add_argument("train")
@@ -95,7 +95,7 @@ def main(argv: list[str] | None = None) -> int:
         return int(report.fails(args.fail_on))
     except (AuditError, OSError) as error:
         if isinstance(error, AuditError):
-            print(f"holdout-audit: {error}", file=sys.stderr)
+            print(f"spliv: {error}", file=sys.stderr)
         else:
-            print("holdout-audit: input or report file could not be accessed; check paths and permissions", file=sys.stderr)
+            print("spliv: input or report file could not be accessed; check paths and permissions", file=sys.stderr)
         return 2

@@ -1,22 +1,22 @@
-# Holdout Audit
+# Spliv
 
 **Check your train/test split before trusting your model score.**
 
-Holdout Audit checks two CSV files for exact sample overlap, repeated observations, shared entities, strict time-order violations, and features that copy the target. One command generates an offline HTML report with counts, record references, and practical next steps. JSON export and CI exit codes are included.
+Spliv checks two CSV files for exact sample overlap, repeated observations, shared entities, strict time-order violations, and features that copy the target. One command generates an offline HTML report with counts, record references, and practical next steps. JSON export and CI exit codes are included.
 
 **Python 3.10+ · Zero runtime dependencies · No API keys · No uploads**
 
 ## Install and try the demo
 
 ```bash
-pip install holdout-audit
-holdout-audit demo
+pip install spliv
+spliv demo
 ```
 
 Open `report.html` in your browser. The bundled synthetic demo intentionally produces five flagged checks. Compare it with the repaired example:
 
 ```bash
-holdout-audit demo --clean --output clean-report.html
+spliv demo --clean --output clean-report.html
 ```
 
 ![Report generated from the synthetic demo](https://raw.githubusercontent.com/zorox06/holdout-audit/main/assets/report-preview.png)
@@ -24,7 +24,7 @@ holdout-audit demo --clean --output clean-report.html
 ## Audit your own CSVs
 
 ```bash
-holdout-audit audit train.csv test.csv --target churn --group customer_id --time observed_at --ignore record_id --output audit.html --json audit.json
+spliv audit train.csv test.csv --target churn --group customer_id --time observed_at --ignore record_id --output audit.html --json audit.json
 ```
 
 Both files must be UTF-8, comma-delimited CSVs with the same unique, nonblank column names. Column order may differ. Target, entity, timestamp, and ignored columns are excluded from feature matching. Exclude unique record IDs so they do not hide otherwise identical samples. Repeat `--ignore` for additional metadata columns.
@@ -44,7 +44,7 @@ Feature matching uses exact CSV string equality. `1` and `1.0`, or `a` and ` a`,
 ## Python API
 
 ```python
-from holdout_audit import audit
+from spliv import audit
 
 report = audit("train.csv", "test.csv", target="churn", ignore=("record_id",))
 print(report.verdict)

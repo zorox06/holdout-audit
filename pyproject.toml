@@ -3,7 +3,7 @@ requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "holdout-audit"
+name = "spliv"
 version = "0.1.0"
 description = "Evidence-first CSV train/test split checks with offline HTML reports."
 readme = "PYPI_README.md"
@@ -26,10 +26,11 @@ Issues = "https://github.com/zorox06/holdout-audit/issues"
 Documentation = "https://github.com/zorox06/holdout-audit#readme"
 
 [project.scripts]
+spliv = "holdout_audit.cli:main"
 holdout-audit = "holdout_audit.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["holdout_audit*"]
+include = ["holdout_audit*", "spliv*"]
 
 [tool.setuptools.package-data]
 holdout_audit = ["data/*.csv"]

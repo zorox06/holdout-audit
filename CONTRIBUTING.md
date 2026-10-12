@@ -1,6 +1,6 @@
 # Contributing
 
-Holdout Audit favors small checks with transparent evidence over broad claims about model safety.
+Spliv favors small checks with transparent evidence over broad claims about model safety.
 
 ## Run locally
 
@@ -8,8 +8,8 @@ Python 3.10+ is sufficient; no runtime or test dependencies are required.
 
 ```bash
 python -m unittest discover -s tests -v
-python -m holdout_audit demo --output report.html
-python -m holdout_audit demo --clean --output clean-report.html
+python -m spliv demo --output report.html
+python -m spliv demo --clean --output clean-report.html
 ```
 
 ## A useful pull request includes
