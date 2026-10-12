@@ -19,13 +19,17 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install the published package from PyPI
-        run: python -m pip install --no-cache-dir --index-url https://pypi.org/simple spliv==0.1.0
+        run: python -m pip install --no-cache-dir --index-url https://pypi.org/simple 'spliv[notebook]==0.2.0'
       - name: Check installed API and both CLI gates
         shell: python
         run: |
           import subprocess
           import spliv
-          assert spliv.__version__ == '0.1.0'
+          assert spliv.__version__ == '0.2.0'
+          import pandas as pd
+          clean = spliv.audit(pd.DataFrame({'x': [1, 2]}), pd.DataFrame({'x': [3]}))
+          clean.raise_for_findings()
+          assert '<iframe' in clean._repr_html_()
           subprocess.run(['spliv', 'demo', '--clean', '--fail-on', 'warning', '--output', 'clean.html'], check=True)
           result = subprocess.run(['spliv', 'demo', '--fail-on', 'warning', '--output', 'flagged.html'])
           assert result.returncode == 1, result.returncode

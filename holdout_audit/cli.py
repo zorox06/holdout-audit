@@ -57,7 +57,7 @@ def _outputs(parser: argparse.ArgumentParser, args: argparse.Namespace) -> list[
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Audit CSV train/test splits locally. No dependencies or API keys.")
-    parser.add_argument("--version", action="version", version="spliv 0.1.0")
+    parser.add_argument("--version", action="version", version="spliv 0.2.0")
     commands = parser.add_subparsers(dest="command", required=True)
     inspect = commands.add_parser("audit", help="Audit your train and test CSVs")
     inspect.add_argument("train")

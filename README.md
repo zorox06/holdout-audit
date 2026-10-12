@@ -25,7 +25,7 @@
 
 Your model's test score is only useful if the split reflects what you want to predict.
 
-**Spliv** inspects two CSV files for exact sample overlap, repeated observations, shared entities, time-order violations, and features that copy the target. It returns counts, record references, and practical next steps in a readable terminal summary, an offline HTML report, and optional JSON.
+**Spliv** inspects two CSV files or pandas DataFrames for exact sample overlap, repeated observations, shared entities, time-order violations, and features that copy the target. It returns counts, record references, and practical next steps in a readable terminal summary, an offline HTML report, and optional JSON.
 
 No model training. No API keys. No uploads. No automatic data changes.
 
@@ -60,6 +60,30 @@ python -m spliv demo --clean --output clean-report.html
 ```
 
 Both demo commands return exit code 0 by default, so you can explore the reports. Use `--fail-on warning` to turn the demo into a gate. The fixtures are invented examples, not benchmark results or evidence of model performance.
+
+## Google Colab and real training workflows
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/zorox06/holdout-audit/blob/main/examples/colab_quickstart.ipynb)
+
+The notebook runs an actual scikit-learn workflow: load data, demonstrate a contaminated split, audit DataFrames, display the report, and fit a preprocessing/model pipeline only after the audit gate passes.
+
+```python
+%pip install -U "spliv[notebook]"
+
+from spliv import audit
+from IPython.display import display
+
+# train_df and test_df include the target column from your chosen split.
+report = audit(train_df, test_df, target="label")
+display(report)
+report.raise_for_findings()  # raises AuditFailed before training if review is needed
+```
+
+Use `pip install "spliv[pandas]"` outside notebooks for DataFrame support. CSV-only use keeps zero runtime dependencies. Upgrade to **0.2.0+** for these APIs; restart the notebook runtime if an older version was already imported.
+
+Read the [practical recipes](https://github.com/zorox06/holdout-audit/blob/main/docs/workflows.md) for independent rows, customer/patient groups, forecasting, existing X/y splits, row inspection, and saved run artifacts.
+
+DataFrame indexes are ignored; evidence uses 1-based row positions. Comparisons follow `to_csv(index=False)` string semantics, so `1` and `1.0` differ. Audit before fitting preprocessing. Spliv does not upload data, but uploaded Colab data is processed in Google's runtime.
 
 ## What it checks
 

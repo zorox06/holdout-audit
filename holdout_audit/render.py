@@ -91,7 +91,7 @@ def render_html(report: Report) -> str:
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;">
 <title>Spliv — Split report</title><style>{CSS}</style></head>
 <body><div class="shell">
-<header class="top"><div class="brand"><span class="mark" aria-hidden="true">S</span>spliv<span class="label">/ 0.1</span></div>
+<header class="top"><div class="brand"><span class="mark" aria-hidden="true">S</span>spliv<span class="label">/ 0.2</span></div>
 <div class="top-right"><span class="label"><span class="dot"></span>Offline report</span><button class="print" type="button">Print / Save PDF</button></div></header>
 <main><section class="hero"><div><p class="eyebrow">Train / test integrity</p><h1>{headings[report.verdict]}</h1>
 <p class="sub">Evidence before confidence. Review split boundaries and exact sample matches before trusting your model metrics.</p></div>

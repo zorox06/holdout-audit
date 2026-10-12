@@ -14,7 +14,7 @@ The PyPI trusted publisher must match these values exactly:
 
 ## Release sequence
 
-1. Update the version in `pyproject.toml`, `holdout_audit/__init__.py`, the JSON tool version in `core.py`, and CLI version in `cli.py`. Update the report brand if needed.
+1. Update the version in `pyproject.toml`, `holdout_audit/__init__.py`, the JSON tool version in `core.py`, and CLI version in `cli.py`. Update the report brand, pinned notebook install, and verify-release workflow version if needed.
 2. Run the test suite and verify the full GitHub Actions test matrix.
 3. Commit the release, create a tag exactly matching `v<package-version>`, and push that tag. The publishing workflow checks this match before building.
 4. Verify the publishing workflow and the actual PyPI release page. Once a PyPI version is published, its distribution files cannot be replaced; fixes require a new version.

@@ -1,5 +1,5 @@
 """Spliv: evidence-first train/test split verification."""
 
-from holdout_audit import AuditError, Report, __version__, audit
+from holdout_audit import AuditError, AuditFailed, Report, __version__, audit
 
-__all__ = ["AuditError", "Report", "audit", "__version__"]
+__all__ = ["AuditError", "AuditFailed", "Report", "audit", "__version__"]

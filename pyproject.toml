@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spliv"
-version = "0.1.0"
-description = "Evidence-first CSV train/test split checks with offline HTML reports."
+version = "0.2.0"
+description = "Train/test split checks for pandas, Colab, and CSV workflows with offline reports."
 readme = "PYPI_README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -18,6 +18,10 @@ classifiers = [
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
+
+[project.optional-dependencies]
+pandas = ["pandas>=1.5"]
+notebook = ["pandas>=1.5", "ipython>=8", "scikit-learn>=1.2"]
 
 [project.urls]
 Homepage = "https://github.com/zorox06/holdout-audit"

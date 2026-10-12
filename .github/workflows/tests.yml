@@ -29,3 +29,18 @@ jobs:
       - name: Smoke-test installed entry point and bundled data
         working-directory: ${{ runner.temp }}
         run: spliv demo --clean --fail-on warning --output installed-demo.html
+
+  notebook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install '.[notebook]' nbclient nbformat ipykernel
+      - name: Test pandas inputs, notebook display, and training gates
+        run: python -m unittest discover -s tests -v
+      - name: Execute Colab notebook end to end
+        run: python tools/check_notebooks.py

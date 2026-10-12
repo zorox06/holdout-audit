@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import csv
+import io
+import os
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,6 +15,15 @@ MISSING = frozenset({"", "na", "n/a", "nan", "null", "none"})
 
 class AuditError(ValueError):
     """An input cannot be audited without guessing its structure."""
+
+
+class AuditFailed(RuntimeError):
+    """A requested training gate failed; the full report is attached."""
+
+    def __init__(self, report: Report, threshold: str):
+        self.report = report
+        self.threshold = threshold
+        super().__init__(f"Split audit failed the {threshold} gate. Review exception.report before training.")
 
 
 @dataclass(frozen=True)
@@ -68,12 +79,35 @@ class Report:
     def to_dict(self) -> dict[str, Any]:
         return {
             "schema_version": 1,
-            "tool_version": "0.1.0",
+            "tool_version": "0.2.0",
             "verdict": self.verdict,
             "inputs": self.inputs,
             "configuration": self.configuration,
             "checks": [asdict(check) for check in self.checks],
         }
+
+    def raise_for_findings(self, threshold: str = "warning") -> Report:
+        """Stop a training script when the selected gate fails. Never edits data."""
+        if self.fails(threshold):
+            raise AuditFailed(self, threshold)
+        return self
+
+    def summary(self) -> list[dict[str, Any]]:
+        """Compact rows suitable for pandas.DataFrame(report.summary())."""
+        return [{"check": c.code, "status": c.status, "severity": c.severity,
+                 "complete": c.complete, "summary": c.summary} for c in self.checks]
+
+    def to_html(self) -> str:
+        """Return a standalone offline HTML document."""
+        from .render import render_html
+        return render_html(self)
+
+    def _repr_html_(self) -> str:
+        """Jupyter/Colab rich display, isolated from the notebook document."""
+        from html import escape
+        return ('<iframe title="Spliv split report" sandbox="allow-scripts" '
+                'style="width:100%;height:850px;border:0" srcdoc="'
+                + escape(self.to_html(), quote=True) + '"></iframe>')
 
 
 def _missing(value: str) -> bool:
@@ -85,26 +119,53 @@ def read_csv(path: str | Path) -> Table:
     path = Path(path)
     try:
         with path.open("r", encoding="utf-8-sig", newline="") as stream:
-            reader = csv.reader(stream, strict=True)
-            headers = next(reader, None)
-            if not headers or any(not name.strip() for name in headers):
-                raise AuditError(f"{path.name}: a nonempty header is required")
-            if len(set(headers)) != len(headers):
-                raise AuditError(f"{path.name}: duplicate column names are ambiguous")
-            rows = []
-            for number, row in enumerate(reader, 1):
-                if len(row) != len(headers):
-                    raise AuditError(
-                        f"{path.name}: data record {number} has {len(row)} fields; "
-                        f"expected {len(headers)}"
-                    )
-                rows.append(tuple(row))
-            if not rows:
-                raise AuditError(f"{path.name}: at least one data record is required")
-            return Table(path.name, tuple(headers), tuple(rows))
+            return _read_stream(stream, path.name)
     except (OSError, UnicodeError, csv.Error) as error:
         # Do not echo parser errors: they can include cell contents or absolute paths.
         raise AuditError(f"{path.name}: cannot read a valid UTF-8 CSV") from error
+
+
+def _read_stream(stream: Any, name: str) -> Table:
+    reader = csv.reader(stream, strict=True)
+    headers = next(reader, None)
+    if not headers or any(not label.strip() for label in headers):
+        raise AuditError(f"{name}: a nonempty header is required")
+    if len(set(headers)) != len(headers):
+        raise AuditError(f"{name}: duplicate column names are ambiguous")
+    rows = []
+    for number, row in enumerate(reader, 1):
+        if len(row) != len(headers):
+            raise AuditError(f"{name}: data record {number} has {len(row)} fields; expected {len(headers)}")
+        rows.append(tuple(row))
+    if not rows:
+        raise AuditError(f"{name}: at least one data record is required")
+    return Table(name, tuple(headers), tuple(rows))
+
+
+def _read_input(value: Any, name: str) -> Table:
+    if isinstance(value, (str, os.PathLike)):
+        return read_csv(value)
+    try:
+        import pandas as pd
+    except ImportError as error:
+        raise AuditError('DataFrame input requires pandas: pip install "spliv[pandas]"') from error
+    if not isinstance(value, pd.DataFrame):
+        raise AuditError("Inputs must be CSV paths or pandas DataFrames")
+    if any(not isinstance(label, str) or not label.strip() for label in value.columns):
+        raise AuditError(f"{name}: DataFrame columns must be nonblank strings; MultiIndex columns are unsupported")
+    if not value.columns.is_unique:
+        raise AuditError(f"{name}: duplicate column names are ambiguous")
+    # A deliberate CSV-equivalent contract: no implicit numeric normalization,
+    # index matching, temporary files, or pandas dtype-dependent equality.
+    try:
+        for row in value.itertuples(index=False, name=None):
+            if any(not pd.api.types.is_scalar(cell) for cell in row):
+                raise AuditError(f"{name}: cells must be scalar values, not nested lists or objects")
+        return _read_stream(io.StringIO(value.to_csv(index=False, lineterminator="\n"), newline=""), name)
+    except (ValueError, TypeError, csv.Error) as error:
+        if isinstance(error, AuditError):
+            raise
+        raise AuditError(f"{name}: cannot convert DataFrame to scalar CSV values") from error
 
 
 def _index(keys: tuple[tuple[str, ...], ...]) -> dict[tuple[str, ...], list[int]]:
@@ -248,15 +309,16 @@ def _target_check(train: Table, test: Table, target: str, features: tuple[str, .
 
 
 def audit(
-    train_path: str | Path, test_path: str | Path, *, target: str | None = None,
+    train_path: Any, test_path: Any, *, target: str | None = None,
     group: str | None = None, time: str | None = None, ignore: tuple[str, ...] = (),
 ) -> Report:
-    """Audit all records, using exact CSV string equality for feature comparisons.
+    """Audit CSV paths or pandas DataFrames with exact CSV string comparisons.
 
     Metadata columns (target/group/time/ignore) are excluded from feature keys.
+    DataFrame indexes are ignored. Missing values serialize as empty strings.
     Returns evidence, never a claim that a dataset is leakage-free.
     """
-    train, test = read_csv(train_path), read_csv(test_path)
+    train, test = _read_input(train_path, "train DataFrame"), _read_input(test_path, "test DataFrame")
     if set(train.headers) != set(test.headers):
         raise AuditError("Train and test must contain the same named columns")
     configured = [name for name in (target, group, time) if name is not None]
